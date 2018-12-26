@@ -1,0 +1,35 @@
+# reference : https://github.com/sivaprasadreddy/spring-boot-microservices-series/blob/master/docker-compose.yml
+# also see .env for full env vars
+version: '3.3'
+services:
+  # see https://medium.com/@MaxouMask/secured-mongodb-container-6b602ef67885
+  food-mongo:
+    image: mongo
+    container_name: ${FOODS_MONGO_HOST}
+    volumes:
+      - ./data/mongo/foods/db:/data/db
+      - ./data/mongo/foods/seeds/:/docker-entrypoint-initdb.d/
+    ports:
+      - "27017:27017"
+    # if we want to enable authentication for the mongo db use these
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${FOODS_MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${FOODS_MONGO_PASSWORD}
+      # props for the seed script init.sh
+      APP_MONGO_USER: ${FOODS_MONGO_USERNAME}
+      APP_MONGO_PASS: ${FOODS_MONGO_PASSWORD}
+      APP_MONGO_DB: ${FOODS_MONGO_DB}
+  config-server:
+    container_name: config-server
+    image: basharlabadi/nutracker-config-server:${CONFIG_SERVER_TAG}
+    ports:
+      - "8888:8888"
+  service-registry:
+    container_name: service-registry
+    image: basharlabadi/nutracker-discovery:${DISCOVERY_SERVER_TAG}
+    ports:
+      - "8761:8761"
+    depends_on:
+      - config-server
+    environment:
+      CONFIG_SERVER_URL: ${CONFIG_SERVER_URL}

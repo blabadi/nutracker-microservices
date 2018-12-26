@@ -1,0 +1,1 @@
+the local-config in the resources is for local development in docker

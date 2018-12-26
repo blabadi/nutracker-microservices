@@ -1,0 +1,21 @@
+---
+# by default the local dev profile is active can be overridden with inline args
+spring:
+  profiles:
+    # this has to be the word native to run locally, you can't choose
+    active: native
+  application:
+    name: configserver-server
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/blabadi/nutracker-configserver
+          searchPaths: configserver-data
+        native:
+          searchLocations: classpath:test-local-config
+server:
+  port: 8883
+
+
+

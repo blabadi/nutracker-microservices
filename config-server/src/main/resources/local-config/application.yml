@@ -1,0 +1,5 @@
+#TODO: check how to scale eurka server
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}

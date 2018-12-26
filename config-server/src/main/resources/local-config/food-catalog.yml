@@ -1,0 +1,11 @@
+server:
+  port: 8001
+
+spring:
+  data:
+    mongodb:
+      database: ${FOODS_MONGO_DB:foods}
+      username: ${FOODS_MONGO_USERNAME:admin}
+      password: ${FOODS_MONGO_PASSWORD:password}
+      host: ${FOODS_MONGO_HOST:localhost}
+      port: 27017
