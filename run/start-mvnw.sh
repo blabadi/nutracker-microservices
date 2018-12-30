@@ -1,7 +1,103 @@
-#!/bin/sh
-# runs the the provided module
+#!/usr/bin/env bash
 
-set -ex
-cd ../$1
-./mvnw spring-boot:run
-cd ../run
+# A best practices Bash script template with many useful functions. This file
+# sources in the bulk of the functions from the source.sh file which it expects
+# to be in the same directory. Only those functions which are likely to need
+# modification are present in this file. This is a great combination if you're
+# writing several scripts! By pulling in the common functions you'll minimise
+# code duplication, as well as ease any potential updates to shared functions.
+
+# A better class of script...
+set -o errexit          # Exit on most errors (see the manual)
+set -o errtrace         # Make sure any error trap is inherited
+set -o nounset          # Disallow expansion of unset variables
+set -o pipefail         # Use last non-zero exit code in a pipeline
+#set -o xtrace          # Trace the execution of the script (debug)
+
+# DESC: Usage help
+# ARGS: None
+# OUTS: None
+function script_usage() {
+    cat << EOF
+Usage:
+     -h|--help                  Displays this help
+     -v|--verbose               Displays verbose output
+    -nc|--no-colour             Disables colour output
+    -cr|--cron                  Run silently unless we encounter an error
+EOF
+}
+
+
+# DESC: Parameter parser
+# ARGS: $@ (optional): Arguments provided to the script
+# OUTS: Variables indicating command-line parameters and options
+function parse_params() {
+    local param
+    while [[ $# -gt 0 ]]; do
+        param="$1"
+        shift
+        case $param in
+            -h|--help)
+                script_usage
+                exit 0
+                ;;
+            -v|--verbose)
+                verbose=true
+                ;;
+            -nc|--no-colour)
+                no_colour=true
+                ;;
+            -cr|--cron)
+                cron=true
+                ;;
+            -p|--project)
+                param="$1"
+                shift
+                project=$param
+                ;;
+             *)
+                script_exit "Invalid parameter was provided: $param" 2
+                ;;
+        esac
+    done
+}
+
+
+# DESC: Main control flow
+# ARGS: $@ (optional): Arguments provided to the script
+# OUTS: None
+function main() {
+    # shellcheck source=source.sh
+    source "$(dirname "${BASH_SOURCE[0]}")/source.sh"
+
+    trap script_trap_err ERR
+    trap script_trap_exit EXIT
+
+    script_init "$@"
+    parse_params "$@"
+    cron_init
+    colour_init
+    #lock_init system
+
+    # runs the the provided module using mvn spring boot plugin
+    # https://github.com/dvddarias/docker-hoster
+    # this is to track the docker containers and add them in the hosts file
+    # to save people from having to do that manually, and to avoid
+    # changing every dependency in the configs to localhost.
+    # (we only start one instance of this)
+    docker start hoster || docker run -d \
+        --name hoster \
+        -v /var/run/docker.sock:/tmp/docker.sock \
+        -v /etc/hosts:/tmp/hosts \
+        basharlabadi/docker-etc-hosts-sync
+
+    cd ../$project
+    ./mvnw spring-boot:run
+
+}
+
+
+# Make it rain
+main "$@"
+
+# vim: syntax=sh cc=80 tw=79 ts=4 sw=4 sts=4 et sr

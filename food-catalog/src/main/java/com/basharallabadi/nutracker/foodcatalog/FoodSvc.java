@@ -28,4 +28,8 @@ class FoodSvc {
     Flux<Food> searchFoodByName(String name) {
         return extendedFoodRepo.searchFoodByName(name);
     }
+
+    Mono<Food> byId(String id) {
+        return foodRepo.findById(id).switchIfEmpty(Mono.error(new NotFound()));
+    }
 }

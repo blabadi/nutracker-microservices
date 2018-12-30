@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: entries
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URL:http://config-server:8888}
+      fail-fast: false

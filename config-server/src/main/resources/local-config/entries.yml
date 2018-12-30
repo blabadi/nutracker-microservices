@@ -1,0 +1,12 @@
+server:
+  port: 8003
+
+spring:
+  data:
+    mongodb:
+      database: ${ENTRIES_MONGO_DB:entries}
+      username: ${ENTRIES_MONGO_USERNAME:admin}
+      password: ${ENTRIES_MONGO_PASSWORD:password}
+      host: ${ENTRIES_MONGO_HOST:entries-mongo}
+      port: 27018
+

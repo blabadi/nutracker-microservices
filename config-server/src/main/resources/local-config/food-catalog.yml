@@ -7,5 +7,5 @@ spring:
       database: ${FOODS_MONGO_DB:foods}
       username: ${FOODS_MONGO_USERNAME:admin}
       password: ${FOODS_MONGO_PASSWORD:password}
-      host: ${FOODS_MONGO_HOST:localhost}
+      host: ${FOODS_MONGO_HOST:food-catalog-mongo}
       port: 27017

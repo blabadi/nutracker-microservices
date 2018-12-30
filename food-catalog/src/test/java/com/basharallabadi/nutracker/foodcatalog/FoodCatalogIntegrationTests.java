@@ -1,5 +1,6 @@
 package com.basharallabadi.nutracker.foodcatalog;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,9 @@ import org.springframework.web.reactive.function.BodyInserters;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 //test properties can be added here
 properties = {
-	"greeting=hello"
+	"spring.cloud.service-registry.auto-registration.enabled=false",
+	"eureka.client.enabled=false",
+	"eureka.client.serviceUrl.registerWithEureka=false"
 })
 class FoodCatalogIntegrationTests {
 
@@ -23,6 +26,11 @@ class FoodCatalogIntegrationTests {
 	@Autowired
 	private WebTestClient webTestClient;
 
+
+	@AfterEach
+	public void cleanup() {
+		mongoTemplate.dropCollection(Food.class).block();
+	}
 
 	@Test
 	void contextLoads() { }

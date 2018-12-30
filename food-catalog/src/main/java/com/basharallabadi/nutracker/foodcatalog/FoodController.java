@@ -25,4 +25,9 @@ public class FoodController {
     public Flux<Food> search(@RequestParam("name") String name){
         return foodSvc.searchFoodByName(name);
     }
+
+    @GetMapping("/{id}")
+    public Mono<Food> get(@PathVariable  String id) {
+        return foodSvc.byId(id);
+    }
 }

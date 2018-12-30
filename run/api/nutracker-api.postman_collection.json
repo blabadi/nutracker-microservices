@@ -1,0 +1,265 @@
+{
+	"info": {
+		"_postman_id": "bd1ac978-396c-4c28-8802-1c635001ad6c",
+		"name": "nutracker-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "food-service",
+			"item": [
+				{
+					"name": "search",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}:{{food-port}}/api/food/search?name=eggs",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{food-port}}",
+							"path": [
+								"api",
+								"food",
+								"search"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "eggs"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}:{{food-port}}/api/food/search?name=eggs",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{food-port}}",
+							"path": [
+								"api",
+								"food",
+								"search"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "eggs"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"eggs\",\n\t\"brand\": \"PC\",\n\t\"unit\": \"Large egg\",\n\t\"protein\": 7,\n\t\"carbs\": 0,\n\t\"fat\": 4,\n\t\"calories\": 40\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}:{{food-port}}/api/food/",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{food-port}}",
+							"path": [
+								"api",
+								"food",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "entries",
+			"item": [
+				{
+					"name": "search by period",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}:{{food-port}}/api/food/search?name=eggs",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{food-port}}",
+							"path": [
+								"api",
+								"food",
+								"search"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "eggs"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"eggs\",\n\t\"brand\": \"PC\",\n\t\"unit\": \"Large egg\",\n\t\"protein\": 7,\n\t\"carbs\": 0,\n\t\"fat\": 4,\n\t\"calories\": 40\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}:{{food-port}}/api/food/",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{food-port}}",
+							"path": [
+								"api",
+								"food",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "identity",
+			"item": [
+				{
+					"name": "search",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}:{{food-port}}/api/food/search?name=eggs",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{food-port}}",
+							"path": [
+								"api",
+								"food",
+								"search"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "eggs"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refresh context",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}:8002/actuator/refresh",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "8002",
+							"path": [
+								"actuator",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "config-server",
+			"item": [
+				{
+					"name": "food-config",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}:8888/food-catalog/defualt",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "8888",
+							"path": [
+								"food-catalog",
+								"defualt"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
