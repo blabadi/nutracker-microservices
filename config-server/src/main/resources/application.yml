@@ -6,13 +6,13 @@ spring:
     # this has to be the word native to run locally, you can't choose another name like dev, local
     active: native
   application:
-    name: configserver-server
+    name: configs-server
   cloud:
     config:
       server:
         git:
           uri: https://github.com/blabadi/nutracker-configserver
-          searchPaths: configserver-data
+          searchPaths: config-data
         native:
           # if we want to have the properties outside the classpath to avoid rebuilding we can use file system to
           # through this property key

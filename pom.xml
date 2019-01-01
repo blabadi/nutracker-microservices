@@ -4,6 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.basharallabadi.nutracker</groupId>
     <artifactId>nutracker-microservices</artifactId>
+    <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
+    <modules>
+        <module>gateway</module>
+    </modules>
     <name>nutracker-microservices</name>
 </project>

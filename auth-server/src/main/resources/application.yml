@@ -1,0 +1,9 @@
+resilience4j.circuitbreaker:
+  backends:
+    identity:
+      ringBufferSizeInClosedState: 5
+      ringBufferSizeInHalfOpenState: 3
+      waitInterval: 5000
+      failureRateThreshold: 50
+      eventConsumerBufferSize: 10
+

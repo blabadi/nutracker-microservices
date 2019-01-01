@@ -1,9 +1,11 @@
+server:
+  port: 8004
+
 resilience4j.circuitbreaker:
   backends:
-    food-catalog:
+    identity:
       ringBufferSizeInClosedState: 5
       ringBufferSizeInHalfOpenState: 3
-      waitInterval: 5000
+      waitInterval: 10000
       failureRateThreshold: 50
       eventConsumerBufferSize: 10
-      registerHealthIndicator: true

@@ -2,6 +2,7 @@ package com.basharallabadi.nutracker.identity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/user")
@@ -11,13 +12,14 @@ public class UserController {
     UserService userService;
 
     @RequestMapping(value="/{name}", method = RequestMethod.GET)
-    public User login(@PathVariable String name){
-        return userService.getByName(name).orElseThrow(() -> new RuntimeException("not found"));
+    public Mono<User> login(@PathVariable String name){
+        return userService.getByName(name)
+                .switchIfEmpty(Mono.error(new NotFound()));
     }
 
-    @RequestMapping(value="/", method = RequestMethod.POST)
-    public void register(@RequestBody CreateCommand u){
-        this.userService.createUser(u);
+    @PostMapping()
+    public Mono<User> register(@RequestBody CreateCommand u){
+        return this.userService.createUser(u);
     }
 
     @RequestMapping(value="/{name}/profile", method = RequestMethod.PUT)

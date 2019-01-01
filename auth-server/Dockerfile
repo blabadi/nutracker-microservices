@@ -9,4 +9,4 @@ COPY ${DEPENDENCY}/BOOT-INF/classes /app
 
 EXPOSE 8002
 
-ENTRYPOINT ["java","-cp","app:app/lib/*","com.basharallabadi.nutracker.identity.IdentityApp"]
+ENTRYPOINT ["java","-cp","app:app/lib/*","com.basharallabadi.nutracker.authserver.AuthServerApplication"]

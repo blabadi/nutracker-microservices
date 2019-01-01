@@ -17,17 +17,12 @@ import reactor.core.publisher.Mono;
 @EnableReactiveMongoRepositories
 @EnableDiscoveryClient
 @RefreshScope
-//@EnableCircuitBreaker
 public class EntriesApplication {
 
-	// this is needed to enable the webclient from using Eurka and Ribbon since @LoadBalanced not supported yet.
+	// this is needed to enable the webclient to use Eurka and Ribbon since @LoadBalanced not supported yet.
 	@Bean
 	WebClient client(LoadBalancerExchangeFilterFunction eff) {
 		return WebClient.builder().filter(logResponse()).filter(eff).build();
-	}
-
-	public static void main(String[] args) {
-		SpringApplication.run(EntriesApplication.class, args);
 	}
 
 	private ExchangeFilterFunction logResponse() {
@@ -36,6 +31,12 @@ public class EntriesApplication {
 			return Mono.just(res);
 		});
 	}
+
+	public static void main(String[] args) {
+		SpringApplication.run(EntriesApplication.class, args);
+	}
+
+
 
 }
 

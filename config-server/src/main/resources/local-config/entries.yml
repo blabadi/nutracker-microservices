@@ -8,5 +8,13 @@ spring:
       username: ${ENTRIES_MONGO_USERNAME:admin}
       password: ${ENTRIES_MONGO_PASSWORD:password}
       host: ${ENTRIES_MONGO_HOST:entries-mongo}
-      port: 27018
+      port: ${ENTRIES_MONGO_PORT:27018}
 
+resilience4j.circuitbreaker:
+  backends:
+    backendA:
+      ringBufferSizeInClosedState: 5
+      ringBufferSizeInHalfOpenState: 3
+      waitInterval: 5000
+      failureRateThreshold: 50
+      eventConsumerBufferSize: 10

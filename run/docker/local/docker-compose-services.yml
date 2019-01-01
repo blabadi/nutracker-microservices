@@ -15,3 +15,11 @@ services:
       - "8003:8003"
     environment:
       CONFIG_SERVER_URL: ${CONFIG_SERVER_URL}
+  identity:
+    container_name: identity
+    image: basharlabadi/nutracker-identity:${IDENTITY_TAG}
+    ports:
+      - "8002:8002"
+    environment:
+      CONFIG_SERVER_URL: ${CONFIG_SERVER_URL}
+

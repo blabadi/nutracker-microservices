@@ -34,12 +34,6 @@ Notes and steps:
 
 
 
-
-
-
-
-
-
 - next:
     - identity service
     - api gateway

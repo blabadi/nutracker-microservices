@@ -16,6 +16,13 @@ services:
       - config-server
     environment:
       CONFIG_SERVER_URL: ${CONFIG_SERVER_URL}
+  auth-server:
+    container_name: auth-server
+    image: basharlabadi/nutracker-auth-server:${AUTH_SERVER_TAG}
+    ports:
+      - "8004:8004"
+    environment:
+      CONFIG_SERVER_URL: ${CONFIG_SERVER_URL}
   food-mongo:
     image: mongo
     container_name: ${FOODS_MONGO_HOST}
@@ -35,12 +42,13 @@ services:
       APP_MONGO_DB: ${FOODS_MONGO_DB}
   entries-mongo:
     image: mongo
+    command: mongod --port 27018
     container_name: ${ENTRIES_MONGO_HOST}
     volumes:
       - ./data/mongo/entries/db:/data/db
       - ./data/mongo/entries/seeds/:/docker-entrypoint-initdb.d/
     ports:
-      - "27018:27017"
+      - "27018:27018"
     # if we want to enable authentication for the mongo db use these
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${ENTRIES_MONGO_USERNAME}

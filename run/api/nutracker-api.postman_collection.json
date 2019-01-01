@@ -117,22 +117,21 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://{{host}}:{{food-port}}/api/food/search?name=eggs",
+							"raw": "http://{{host}}:{{entries-port}}/api/entry/user/bashar/from/20181201/to/20181201",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
 							],
-							"port": "{{food-port}}",
+							"port": "{{entries-port}}",
 							"path": [
 								"api",
-								"food",
-								"search"
-							],
-							"query": [
-								{
-									"key": "name",
-									"value": "eggs"
-								}
+								"entry",
+								"user",
+								"bashar",
+								"from",
+								"20181201",
+								"to",
+								"20181201"
 							]
 						}
 					},
@@ -176,7 +175,7 @@
 			"name": "identity",
 			"item": [
 				{
-					"name": "search",
+					"name": "get by user name",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -185,22 +184,16 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://{{host}}:{{food-port}}/api/food/search?name=eggs",
+							"raw": "http://{{host}}:{{identity-port}}/api/user/bashar",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
 							],
-							"port": "{{food-port}}",
+							"port": "{{identity-port}}",
 							"path": [
 								"api",
-								"food",
-								"search"
-							],
-							"query": [
-								{
-									"key": "name",
-									"value": "eggs"
-								}
+								"user",
+								"bashar"
 							]
 						}
 					},
@@ -225,6 +218,37 @@
 							"path": [
 								"actuator",
 								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\" : \"bashar\",\n\t\"email\": \"bashar@basharallabadi.com\",\n\t\"password\": \"pass123\"\n\t\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}:{{identity-port}}/api/user",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{identity-port}}",
+							"path": [
+								"api",
+								"user"
 							]
 						}
 					},
@@ -254,6 +278,78 @@
 							"path": [
 								"food-catalog",
 								"defualt"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "auth-server",
+			"item": [
+				{
+					"name": "get token",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "trusted",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "nutracker-app",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "bashar",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "pass1234",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "nutracker-app",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{host}}:{{oauth-port}}/oauth/token",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{oauth-port}}",
+							"path": [
+								"oauth",
+								"token"
 							]
 						}
 					},

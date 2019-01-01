@@ -30,7 +30,6 @@ Usage:
 EOF
 }
 
-projects=""
 all_projects="config-server discovery entries food-catalog identity"
 # DESC: Parameter parser
 # ARGS: $@ (optional): Arguments provided to the script
@@ -38,7 +37,8 @@ all_projects="config-server discovery entries food-catalog identity"
 function parse_params() {
     local param
     local all
-    all=false
+    # initialize with the
+
     while [[ $# -gt 0 ]]; do
         param="$1"
         shift
@@ -63,12 +63,12 @@ function parse_params() {
                 push=true
                 ;;
              *)
+                projects="$param $@"
                 break
                 ;;
         esac
     done
 
-    projects="$@"
     if [[ -n ${all-} ]]; then
         projects=$all_projects
     fi
