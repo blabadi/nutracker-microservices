@@ -1,0 +1,58 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: entries
+          uri: lb://entries
+          order: 0
+          predicates:
+            - Path=/api/v1/entry/**
+          filters:
+            - StripPrefix=2
+            - PrefixPath=/api
+            - name: RequestRateLimiter
+              args:
+                key-resolver: '#{@remoteAddrKeyResolver}'
+                redis-rate-limiter.replenishRate: 60
+                redis-rate-limiter.burstCapacity: 100
+        - id: food
+          uri: lb://food-catalog
+          order: 1
+          predicates:
+            - Path=/api/v1/food-catalog/**
+          filters:
+            - StripPrefix=3
+            - PrefixPath=/api/food
+            - name: RequestRateLimiter
+              args:
+                key-resolver: '#{@remoteAddrKeyResolver}'
+                redis-rate-limiter.replenishRate: 60
+                redis-rate-limiter.burstCapacity: 100
+        - id: identity
+          uri: lb://identity
+          order: 1
+          predicates:
+            - Path=/api/v1/identity/**
+          filters:
+            - StripPrefix=3
+            - PrefixPath=/api/user
+            - name: RequestRateLimiter
+              args:
+                key-resolver: '#{@remoteAddrKeyResolver}'
+                redis-rate-limiter.replenishRate: 60
+                redis-rate-limiter.burstCapacity: 100
+redis:
+  host: ${GATEWAY_REDIS_HOST:redis}
+  port: ${GATEWAY_REDIS_PORT:6379}
+  database: 0
+
+gateway:
+  rateLimiter:
+    defaultReplenishRate: 50
+    defaultBurstCapacity: 100
+
+
+

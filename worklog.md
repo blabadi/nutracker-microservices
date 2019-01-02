@@ -32,15 +32,18 @@ Notes and steps:
 
 - updated run/docker scripts with options
 
+- identity service
+    - still need db
+- api gateway
+    - needs circuit breakers and tune executors pools
+- oauth2
+    - setup jwt verification url
 
 
 - next:
-    - identity service
-    - api gateway
-    - oauth2
     - elastic search
     - log aggregation and request trace
     - spring admin
     - k8s
-    - jenkins
-    -
+    - jenkins/CI
+    - better secrets managements

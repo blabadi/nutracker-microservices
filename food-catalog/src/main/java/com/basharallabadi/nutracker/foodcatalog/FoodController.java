@@ -21,7 +21,7 @@ public class FoodController {
         return foodSvc.createFood(food);
     }
 
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @GetMapping
     public Flux<Food> search(@RequestParam("name") String name){
         return foodSvc.searchFoodByName(name);
     }

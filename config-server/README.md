@@ -1,1 +1,1 @@
-the local-config in the resources is for local development in docker
+docs: https://cloud.spring.io/spring-cloud-gateway/multi/multi_spring-cloud-gateway.html

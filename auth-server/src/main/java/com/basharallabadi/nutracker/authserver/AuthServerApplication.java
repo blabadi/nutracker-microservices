@@ -2,6 +2,7 @@ package com.basharallabadi.nutracker.authserver;
 
 import com.ea.async.Async;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -12,6 +13,8 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
@@ -27,12 +30,20 @@ import org.springframework.security.oauth2.config.annotation.configurers.ClientD
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
+import java.io.IOException;
 
 @SpringBootApplication
 @EnableDiscoveryClient
@@ -78,6 +89,16 @@ class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
 	@Autowired
 	AuthenticationManager authenticationManager;
 
+	@Autowired
+	TokenStore tokenStore;
+
+	@Autowired
+	TokenEnhancer tokenEnhancer;
+
+	//TODO: not good here,
+	private static final String ENC_PASSWORD = "58347105";
+
+
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 		clients.inMemory()
@@ -91,11 +112,28 @@ class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
 				.secret(encoder.encode("trusted"));
 	}
 
-
 	//https://stackoverflow.com/questions/28254519/spring-oauth2-authorization-server
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-		endpoints.authenticationManager(authenticationManager);
+		endpoints.tokenStore(tokenStore)
+				.tokenEnhancer(tokenEnhancer)
+				.authenticationManager(authenticationManager);
+	}
+
+	@Bean
+	public JwtAccessTokenConverter accessTokenConverter() {
+		JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
+		KeyStoreKeyFactory keyStoreKeyFactory =
+				new KeyStoreKeyFactory(
+						new ClassPathResource("jwt.jks"),
+						ENC_PASSWORD.toCharArray());
+		converter.setKeyPair(keyStoreKeyFactory.getKeyPair("jwt"));
+		return converter;
+	}
+
+	@Bean
+	public TokenStore tokenStore() {
+		return new JwtTokenStore(accessTokenConverter());
 	}
 
 
@@ -113,6 +151,8 @@ class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
 //        return bean;
 //    }
 }
+
+
 @Configuration
 @EnableWebSecurity
 class AuthenticationConfiguration extends WebSecurityConfigurerAdapter {
@@ -147,3 +187,5 @@ class AuthenticationConfiguration extends WebSecurityConfigurerAdapter {
 		};
 	}
 }
+
+

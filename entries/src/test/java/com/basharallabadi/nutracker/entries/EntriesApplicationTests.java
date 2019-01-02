@@ -81,7 +81,7 @@ public class EntriesApplicationTests {
 		mongoTemplate.insertAll(List.of(entryInPeriod1, entryInPeriod2, entryOutsidePeriod, entryForAnotherUser)).blockLast();
 
 		webTestClient.get()
-				.uri("/api/entry/user/tester/from/20181203/to/20181203")
+				.uri("/api/entry?user=tester&from=20181203&to=20181203")
 				.exchange()
 				.expectBody()
 				.consumeWith(

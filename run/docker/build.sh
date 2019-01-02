@@ -30,7 +30,7 @@ Usage:
 EOF
 }
 
-all_projects="config-server discovery entries food-catalog identity"
+all_projects="config-server discovery auth-server gateway entries food-catalog identity"
 # DESC: Parameter parser
 # ARGS: $@ (optional): Arguments provided to the script
 # OUTS: Variables indicating command-line parameters and options

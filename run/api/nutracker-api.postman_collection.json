@@ -18,7 +18,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://{{host}}:{{food-port}}/api/food/search?name=eggs",
+							"raw": "http://{{host}}:{{food-port}}/api/food?name=egg",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
@@ -26,13 +26,12 @@
 							"port": "{{food-port}}",
 							"path": [
 								"api",
-								"food",
-								"search"
+								"food"
 							],
 							"query": [
 								{
 									"key": "name",
-									"value": "eggs"
+									"value": "egg"
 								}
 							]
 						}
@@ -49,7 +48,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://{{host}}:{{food-port}}/api/food/search?name=eggs",
+							"raw": "http://{{host}}:{{food-port}}/api/food/1234",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
@@ -58,13 +57,7 @@
 							"path": [
 								"api",
 								"food",
-								"search"
-							],
-							"query": [
-								{
-									"key": "name",
-									"value": "eggs"
-								}
+								"1234"
 							]
 						}
 					},
@@ -117,7 +110,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://{{host}}:{{entries-port}}/api/entry/user/bashar/from/20181201/to/20181201",
+							"raw": "http://{{host}}:{{entries-port}}/api/entry?username=bashar&start=20181201&end=20181210",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
@@ -125,13 +118,21 @@
 							"port": "{{entries-port}}",
 							"path": [
 								"api",
-								"entry",
-								"user",
-								"bashar",
-								"from",
-								"20181201",
-								"to",
-								"20181201"
+								"entry"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "bashar"
+								},
+								{
+									"key": "start",
+									"value": "20181201"
+								},
+								{
+									"key": "end",
+									"value": "20181210"
+								}
 							]
 						}
 					},
@@ -290,6 +291,20 @@
 			"item": [
 				{
 					"name": "get token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "deeabb28-715a-4833-83ad-54e4f028d263",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"token\", jsonData.access_token);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -325,7 +340,7 @@
 								},
 								{
 									"key": "password",
-									"value": "pass1234",
+									"value": "pass123",
 									"type": "text"
 								},
 								{
@@ -350,6 +365,101 @@
 							"path": [
 								"oauth",
 								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "gateway",
+			"item": [
+				{
+					"name": "entries",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/entry?username=bashar&start=20181201&end=20181210",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"entry"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "bashar"
+								},
+								{
+									"key": "start",
+									"value": "20181201"
+								},
+								{
+									"key": "end",
+									"value": "20181210"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search food",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/food-catalog?name=egg",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"food-catalog"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "egg"
+								}
 							]
 						}
 					},

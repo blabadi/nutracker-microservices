@@ -17,10 +17,10 @@ public class EntryController {
     @Autowired
     private EntryService entrySvc;
 
-    @RequestMapping(value="/user/{username}/from/{start}/to/{end}", method = RequestMethod.GET)
-    public Flux<Entry> getUserEntriesInPeriod(@PathVariable("start") String start,
-                                              @PathVariable("end") String end,
-                                              @PathVariable("username") String username) {
+    @GetMapping
+    public Flux<Entry> getUserEntriesInPeriod(@RequestParam("start") String start,
+                                              @RequestParam("end") String end,
+                                              @RequestParam("username") String username) {
 
         DateTimeFormatter dateTimeFormatter =  DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate startDate, endDate = null;

@@ -7,6 +7,11 @@ services:
     image: basharlabadi/nutracker-config-server:${CONFIG_SERVER_TAG}
     ports:
       - "8888:8888"
+  redis:
+    image: redis:5.0.3
+    container_name: redis
+    ports:
+      - "6379:6379"
   discovery:
     container_name: discovery
     image: basharlabadi/nutracker-discovery:${DISCOVERY_SERVER_TAG}
@@ -24,7 +29,7 @@ services:
     environment:
       CONFIG_SERVER_URL: ${CONFIG_SERVER_URL}
   food-mongo:
-    image: mongo
+    image: mongo:4.1
     container_name: ${FOODS_MONGO_HOST}
     volumes:
       - ./data/mongo/foods/db:/data/db
@@ -41,7 +46,7 @@ services:
       APP_MONGO_PASS: ${FOODS_MONGO_PASSWORD}
       APP_MONGO_DB: ${FOODS_MONGO_DB}
   entries-mongo:
-    image: mongo
+    image: mongo:4.1
     command: mongod --port 27018
     container_name: ${ENTRIES_MONGO_HOST}
     volumes:
