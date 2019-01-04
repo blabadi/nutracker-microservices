@@ -27,7 +27,7 @@ a user can search for a food, and add a portion of it and many others as daily e
         - client side load balancing (Ribbon)
         - reactive async I/O flow (reactor)
         - token based authentication (OAuth2)
-        - Api gateway (tbd)
+        - Api gateway (spring cloud gateway)
         - Monitoring:
             - health checking
             - logs aggregation

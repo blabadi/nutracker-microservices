@@ -1,10 +1,12 @@
 package com.basharallabadi.nutracker.foodcatalog;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Service
 class FoodSvc {
     private FoodRepo foodRepo;
@@ -26,6 +28,7 @@ class FoodSvc {
     }
 
     Flux<Food> searchFoodByName(String name) {
+        log.info("searchFoodByName called with : {}", name);
         return extendedFoodRepo.searchFoodByName(name);
     }
 

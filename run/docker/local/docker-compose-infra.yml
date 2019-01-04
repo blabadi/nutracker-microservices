@@ -62,3 +62,9 @@ services:
       APP_MONGO_USER: ${ENTRIES_MONGO_USERNAME}
       APP_MONGO_PASS: ${ENTRIES_MONGO_PASSWORD}
       APP_MONGO_DB: ${ENTRIES_MONGO_DB}
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"

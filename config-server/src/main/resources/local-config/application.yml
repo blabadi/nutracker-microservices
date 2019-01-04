@@ -3,12 +3,31 @@ eureka:
   client:
     serviceUrl:
       defaultZone: ${EUREKA_URI:http://discovery:8761/eureka}
+
 management:
   endpoints:
     web:
       exposure:
         include: '*'
+
 spring:
+  sleuth:
+    sampler:
+      probability: 0.9
+  zipkin:
+      baseUrl: ${ZIPKIN_URL:http://zipkin:9411}
   devtools:
     remote:
       secret: thisismysecret
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.http.server.reactive: DEBUG
+    org.springframework.web.reactive: DEBUG
+    reactor.ipc.netty: DEBUG
+    reactor.netty: DEBUG
+
+
+
+

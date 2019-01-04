@@ -14,7 +14,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.concurrent.CompletableFuture;
 
-@Async
 @Service
 public class IdentityServiceAdapter {
 
