@@ -44,11 +44,10 @@ spring:
                 key-resolver: '#{@remoteAddrKeyResolver}'
                 redis-rate-limiter.replenishRate: 60
                 redis-rate-limiter.burstCapacity: 100
-
-redis:
-  host: ${GATEWAY_REDIS_HOST:redis}
-  port: ${GATEWAY_REDIS_PORT:6379}
-  database: 0
+  redis:
+    host: ${GATEWAY_REDIS_HOST:redis}
+    port: ${GATEWAY_REDIS_PORT:6379}
+    database: 0
 
 gateway:
   rateLimiter:

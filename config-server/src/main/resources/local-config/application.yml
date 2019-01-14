@@ -11,22 +11,30 @@ management:
         include: '*'
 
 spring:
+  zipkin:
+#     for http sending
+#    baseUrl: ${ZIPKIN_URL:http://zipkin:9411}
+    sender:
+      type: kafka
+  kafka:
+    bootstrap-servers:
+      - ${KAFKA_URL:kafka}:${KAFKA_PORT:9092}
   sleuth:
     sampler:
-      probability: 0.9
-  zipkin:
-      baseUrl: ${ZIPKIN_URL:http://zipkin:9411}
+      probability: 1.0
   devtools:
     remote:
       secret: thisismysecret
-
-logging:
-  level:
-    org.springframework.cloud.gateway: DEBUG
-    org.springframework.http.server.reactive: DEBUG
-    org.springframework.web.reactive: DEBUG
-    reactor.ipc.netty: DEBUG
-    reactor.netty: DEBUG
+  boot:
+    admin:
+      client:
+        url: http://admin:9009
+#  level:
+#    org.springframework.cloud.gateway: DEBUG
+#    org.springframework.http.server.reactive: DEBUG
+#    org.springframework.web.reactive: DEBUG
+#    reactor.ipc.netty: DEBUG
+#    reactor.netty: DEBUG
 
 
 

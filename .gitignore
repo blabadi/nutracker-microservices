@@ -1,4 +1,6 @@
 /run/docker/data/mongo/foods/db/
+/run/docker/data/mongo/entries/db/
+/run/docker/data/kafka/
 /target/
 !.mvn/wrapper/maven-wrapper.jar
 

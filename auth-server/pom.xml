@@ -73,14 +73,16 @@
 			<artifactId>spring-cloud-starter-oauth2</artifactId>
 		</dependency>
 
+		<!-- zipkin -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-sleuth</artifactId>
+			<artifactId>spring-cloud-starter-zipkin</artifactId>
 		</dependency>
+		<!-- zipkin -->
 
 		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-sleuth-zipkin</artifactId>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
 		</dependency>
 
 		<dependency>

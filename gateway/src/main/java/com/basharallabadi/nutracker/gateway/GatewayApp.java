@@ -1,15 +1,11 @@
 package com.basharallabadi.nutracker.gateway;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchangeFilterFunction;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
-import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
-import org.springframework.cloud.gateway.route.RouteLocator;
-import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -41,31 +37,6 @@ public class GatewayApp {
         SpringApplication.run(GatewayApp.class, args);
     }
 
-      // done in properties file to be configurable :D
-//    @Bean
-//    public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
-//        //@formatter:off
-//        return builder.routes()
-//                .route("entries", r ->
-//                        r.path("/api/v1/entry/**")
-//                         .filters(fs -> fs
-//                                 // https://stackoverflow.com/questions/48865174/spring-cloud-gateway-proxy-forward-the-entire-sub-part-of-url
-//                                 //.rewritePath("\\/v1\\/entry\\/(?<path>.*)", "/entry/${path}")
-//                                 .stripPrefix(2).prefixPath("/api"))
-//                         .uri("lb://entries")
-//                    )
-//                .build();
-//        //@formatter:on
-//    }
-
-      // not needed but can be defined here and used in properties files like the key resolver
-//    @Bean
-//    RedisRateLimiter rateLimiter(@Value("${gateway.rateLimiter.defaultReplenishRate:40}") int defaultRate,
-//                                 @Value("${gateway.rateLimiter.defaultBurstCapacity:80}") int defaultBurstCapacity) {
-//        return new RedisRateLimiter(defaultRate, defaultBurstCapacity);
-//    }
-
-
     // For simple IP based rate limiting
     // https://windmt.com/2018/05/09/spring-cloud-15-spring-cloud-gateway-ratelimiter/
     @Bean(name = RemoteAddrKeyResolver.BEAN_NAME)
@@ -86,6 +57,12 @@ public class GatewayApp {
                 throws Exception {
             // @formatter:off
             http
+                .csrf()
+                    .disable()
+                .authorizeExchange()
+                    .pathMatchers("/actuator/**")
+                        .permitAll()
+                .and()
                 .authorizeExchange()
                     .anyExchange()
                         .authenticated()
@@ -117,6 +94,31 @@ public class GatewayApp {
         return Base64.getMimeDecoder().decode(encoded);
     }
 
+
+
+// done in properties file to be configurable :D
+//    @Bean
+//    public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
+//        //@formatter:off
+//        return builder.routes()
+//                .route("entries", r ->
+//                        r.path("/api/v1/entry/**")
+//                         .filters(fs -> fs
+//                                 // https://stackoverflow.com/questions/48865174/spring-cloud-gateway-proxy-forward-the-entire-sub-part-of-url
+//                                 //.rewritePath("\\/v1\\/entry\\/(?<path>.*)", "/entry/${path}")
+//                                 .stripPrefix(2).prefixPath("/api"))
+//                         .uri("lb://entries")
+//                    )
+//                .build();
+//        //@formatter:on
+//    }
+
+// not needed but can be defined here and used in properties files like the key resolver
+//    @Bean
+//    RedisRateLimiter rateLimiter(@Value("${gateway.rateLimiter.defaultReplenishRate:40}") int defaultRate,
+//                                 @Value("${gateway.rateLimiter.defaultBurstCapacity:80}") int defaultBurstCapacity) {
+//        return new RedisRateLimiter(defaultRate, defaultBurstCapacity);
+//    }
 
 }
 

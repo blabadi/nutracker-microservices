@@ -83,7 +83,7 @@ function build_img() {
         pushArg="dockerfile:push"
     fi
     cd ../../$dir
-    ./mvnw -Dmaven.test.skip=true clean package dockerfile:build $pushArg
+    ./mvnw clean; ./mvnw install dockerfile:build $pushArg -Dmaven.test.skip=true
     cd $orig_cwd
 }
 
