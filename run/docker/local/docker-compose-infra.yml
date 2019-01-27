@@ -104,3 +104,4 @@ services:
     depends_on:
       - kafka
       - zookeeper
+

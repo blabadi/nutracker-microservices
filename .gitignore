@@ -3,6 +3,7 @@
 /run/docker/data/kafka/
 /target/
 !.mvn/wrapper/maven-wrapper.jar
+nohup.out
 
 ### STS ###
 .apt_generated
