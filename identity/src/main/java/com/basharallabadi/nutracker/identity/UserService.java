@@ -9,7 +9,27 @@ import java.util.*;
 @Service
 public class UserService {
 
-    private Map<String, User> users = new HashMap<>();
+
+    private Map<String, User> users = new HashMap<>(Map.of("896494", User.builder()
+            .id(String.valueOf(896494L))
+            .email("admin@nutracker.com")
+            .name("admin")
+            .active(true)
+            .createdAt(new Date())
+            .roles(Set.of("ROLE_ADMIN"))
+            .password(new BCryptPasswordEncoder().encode("admin"))
+            .build()
+    , "123", User.builder()
+            .id(String.valueOf(123))
+            .email("user1@nutracker.com")
+            .name("user1")
+            .active(true)
+            .createdAt(new Date())
+            .roles(Set.of("ROLE_USER"))
+            .password(new BCryptPasswordEncoder().encode("pass1234"))
+            .build()
+        )
+    );
 
     public Mono<User> getByName(String name) {
         return Mono.fromSupplier(() -> users).flatMap(
@@ -32,7 +52,7 @@ public class UserService {
                 .name(user.getName())
                 .active(true)
                 .createdAt(new Date())
-                .roles(Set.of("USER"))
+                .roles(Set.of(user.getRoles().toArray(new String[0])))
                 .password(new BCryptPasswordEncoder().encode(user.getPassword()))
                 .build();
 

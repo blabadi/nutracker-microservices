@@ -8,9 +8,16 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -24,7 +31,9 @@ import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 
@@ -44,7 +53,6 @@ public class GatewayApp {
         return new RemoteAddrKeyResolver();
     }
 
-
     @Bean
     WebClient client(LoadBalancerExchangeFilterFunction eff) {
         return WebClient.builder().filter(eff).build();
@@ -52,6 +60,7 @@ public class GatewayApp {
 
     @Configuration
     public class SecurityConfig {
+
         @Bean
         SecurityWebFilterChain springWebFilterChain(ServerHttpSecurity http)
                 throws Exception {
@@ -61,7 +70,7 @@ public class GatewayApp {
                     .disable()
                 .authorizeExchange()
                     .pathMatchers("/actuator/**")
-                        .permitAll()
+                    .hasRole("ADMIN")
                 .and()
                 .authorizeExchange()
                     .anyExchange()
@@ -69,9 +78,29 @@ public class GatewayApp {
                 .and()
                     .oauth2ResourceServer()
                         .jwt()
+                            .jwtAuthenticationConverter(grantedAuthoritiesExtractor())
                             .publicKey(get());
+
             // @formatter:on
             return http.build();
+        }
+
+
+    }
+
+    Converter<Jwt, Mono<AbstractAuthenticationToken>> grantedAuthoritiesExtractor() {
+        GrantedAuthoritiesExtractor extractor = new GrantedAuthoritiesExtractor();
+        return new ReactiveJwtAuthenticationConverterAdapter(extractor);
+    }
+
+    static class GrantedAuthoritiesExtractor extends JwtAuthenticationConverter {
+        protected Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
+            Collection<String> authorities = (Collection<String>)
+                    jwt.getClaims().get("authorities");
+
+            return authorities.stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList());
         }
     }
 
@@ -119,6 +148,8 @@ public class GatewayApp {
 //                                 @Value("${gateway.rateLimiter.defaultBurstCapacity:80}") int defaultBurstCapacity) {
 //        return new RedisRateLimiter(defaultRate, defaultBurstCapacity);
 //    }
+
+
 
 }
 

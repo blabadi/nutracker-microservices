@@ -95,7 +95,7 @@ class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
 	@Autowired
 	TokenEnhancer tokenEnhancer;
 
-	//TODO: not good here,
+	//TODO: not good here
 	private static final String ENC_PASSWORD = "58347105";
 
 
@@ -103,13 +103,21 @@ class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 		clients.inMemory()
 				.withClient("nutracker-app")
-				.authorizedGrantTypes(
-						"implicit", "refresh_token", "password", "authorization_code"
-				)
-				.authorities("READ", "WRITE")
-				.scopes("profile", "entries")
-				.resourceIds("api-gateway")
-				.secret(encoder.encode("trusted"));
+					.authorizedGrantTypes(
+							"implicit", "refresh_token", "password", "authorization_code"
+					)
+	//				.authorities("READ", "WRITE")
+					.scopes("PROFILE", "ENTRIES", "ACTUATOR")
+					.resourceIds("api-gateway")
+					.secret(encoder.encode("trusted"))
+				.and()
+					.withClient("admin-ui")
+					.authorizedGrantTypes("authorization_code")
+					.secret(encoder.encode("admin-ui"))
+					.resourceIds("admin-data")
+					.scopes("ACTUATOR")
+					.redirectUris("http://localhost:9009/login/oauth2/code/admin-server");
+//					.autoApprove(true);
 	}
 
 	//https://stackoverflow.com/questions/28254519/spring-oauth2-authorization-server
@@ -182,7 +190,7 @@ class AuthenticationConfiguration extends WebSecurityConfigurerAdapter {
 					user.getId(),
 					user.getPassword(),
 					true, true, true, true,
-					AuthorityUtils.createAuthorityList("USER")
+					AuthorityUtils.createAuthorityList(user.getRoles().toArray(new String[0]))
 			);
 		};
 	}

@@ -1,2 +1,31 @@
 server:
     port: 9009
+
+auth:
+  server: http://localhost:8004
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          admin-server:
+            provider: local-auth-server
+            client-id : admin-ui
+            client-secret : admin-ui
+            client-authentication-method : basic
+            authorization-grant-type: authorization_code
+            scope : ACTUATOR
+            client-name : admin server
+            redirect-uri-template : "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          local-auth-server :
+            authorization-uri: ${auth.server}/oauth/authorize
+            token-uri: ${auth.server}/oauth/token
+            user-info-uri : ${auth.server}/resources/userinfo
+            user-name-attribute : name
+
+logging:
+  level:
+    org.springframework.security: INFO
+    org.springframework.security.oauth2: DEBUG
