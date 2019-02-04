@@ -18,9 +18,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -29,21 +31,30 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
+import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
+import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
+import java.security.Principal;
+import java.util.Collections;
+import java.util.Map;
 
 @SpringBootApplication
 @EnableDiscoveryClient
@@ -56,11 +67,10 @@ public class AuthServerApplication {
 		SpringApplication.run(AuthServerApplication.class, args);
 	}
 
-
 	// this is needed to enable the webclient to use Eurka and Ribbon since @LoadBalanced not supported yet.
 	@Bean
 	WebClient client(LoadBalancerExchangeFilterFunction eff) {
-		return WebClient.builder().filter(logResponse()).filter(eff).build();
+		return WebClient.builder().filter(logResponse()).filter(logRequest()).filter(eff).build();
 	}
 
 	//needed or this exception will be thrown:
@@ -70,6 +80,12 @@ public class AuthServerApplication {
 		return new BCryptPasswordEncoder();
 	}
 
+	private ExchangeFilterFunction logRequest() {
+		return ExchangeFilterFunction.ofRequestProcessor(req -> {
+			System.out.println("Response status code  " + req.url());
+			return Mono.just(req);
+		});
+	}
 
 	private ExchangeFilterFunction logResponse() {
 		return ExchangeFilterFunction.ofResponseProcessor(res -> {
@@ -77,7 +93,9 @@ public class AuthServerApplication {
 			return Mono.just(res);
 		});
 	}
+
 }
+
 
 @Configuration
 @EnableAuthorizationServer
@@ -112,11 +130,11 @@ class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
 					.secret(encoder.encode("trusted"))
 				.and()
 					.withClient("admin-ui")
-					.authorizedGrantTypes("authorization_code")
+					.authorizedGrantTypes("authorization_code", "client_credentials")
 					.secret(encoder.encode("admin-ui"))
-					.resourceIds("admin-data")
-					.scopes("ACTUATOR")
-					.redirectUris("http://localhost:9009/login/oauth2/code/admin-server");
+//					.resourceIds("admin-data")
+					.scopes("ACTUATOR", "PROFILE")
+					.redirectUris("http://admin:9009/login/oauth2/code/admin-server");
 //					.autoApprove(true);
 	}
 
@@ -144,20 +162,6 @@ class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
 		return new JwtTokenStore(accessTokenConverter());
 	}
 
-
-//    @Bean
-//    public FilterRegistrationBean filterRegistrationBean() {
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        CorsConfiguration config = new CorsConfiguration();
-//        config.setAllowCredentials(true);
-//        config.addAllowedOrigin("*");
-//        config.addAllowedHeader("*");
-//        config.addAllowedMethod("*");
-//        source.registerCorsConfiguration("/**", config);
-//        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
-//        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-//        return bean;
-//    }
 }
 
 
@@ -182,10 +186,22 @@ class AuthenticationConfiguration extends WebSecurityConfigurerAdapter {
 		return super.authenticationManager();
 	}
 
+	protected void configure(HttpSecurity http) throws Exception {
+		http
+			.authorizeRequests()
+				.antMatchers("/actuator/**")
+					.hasRole("ADMIN")
+			.anyRequest()
+				.authenticated()
+			.and()
+			.	formLogin()
+			.and()
+				.httpBasic();
+	}
 	@Bean
 	protected UserDetailsService userDetailsService() {
 		return (username) -> {
-			com.basharallabadi.nutracker.authserver.User user = Async.await(identityServiceAdapter.byUsername(username));
+			com.basharallabadi.nutracker.authserver.User user = Async.await(identityServiceAdapter.byUsername(username).toFuture());
 			return new User(
 					user.getId(),
 					user.getPassword(),
@@ -196,4 +212,25 @@ class AuthenticationConfiguration extends WebSecurityConfigurerAdapter {
 	}
 }
 
+@RestController
+class ProfileRestController {
+	@GetMapping("/resources/user-info")
+	Map<String, String> profile(Principal principal) {
+	    return Collections.singletonMap("name", principal.getName());
+	}
+}
 
+@Configuration
+@EnableResourceServer
+class ResourceServerConfig extends ResourceServerConfigurerAdapter {
+
+	@Override
+	public void configure(HttpSecurity http) throws Exception {
+		http
+			.antMatcher("/resources/**")
+			.authorizeRequests()
+			.mvcMatchers("/resources/user-info").access("#oauth2.hasScope('PROFILE')");
+
+
+	}
+}

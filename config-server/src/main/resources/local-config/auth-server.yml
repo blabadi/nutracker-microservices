@@ -1,6 +1,12 @@
 server:
   port: 8004
 
+eureka:
+  instance:
+    metadata-map:
+      user.name: admin
+      user.password: admin
+
 # not used right now
 resilience4j.circuitbreaker:
   backends:

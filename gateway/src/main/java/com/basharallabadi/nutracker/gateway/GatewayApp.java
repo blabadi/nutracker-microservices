@@ -30,8 +30,10 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -60,7 +62,6 @@ public class GatewayApp {
 
     @Configuration
     public class SecurityConfig {
-
         @Bean
         SecurityWebFilterChain springWebFilterChain(ServerHttpSecurity http)
                 throws Exception {
@@ -70,7 +71,7 @@ public class GatewayApp {
                     .disable()
                 .authorizeExchange()
                     .pathMatchers("/actuator/**")
-                    .hasRole("ADMIN")
+                    .hasAuthority("ACTUATOR")
                 .and()
                 .authorizeExchange()
                     .anyExchange()
@@ -84,8 +85,6 @@ public class GatewayApp {
             // @formatter:on
             return http.build();
         }
-
-
     }
 
     Converter<Jwt, Mono<AbstractAuthenticationToken>> grantedAuthoritiesExtractor() {
@@ -95,10 +94,18 @@ public class GatewayApp {
 
     static class GrantedAuthoritiesExtractor extends JwtAuthenticationConverter {
         protected Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
-            Collection<String> authorities = (Collection<String>)
-                    jwt.getClaims().get("authorities");
+            List<String> all = new ArrayList<>();
+            Collection<String> authorities =
+                    jwt.getClaimAsStringList("authorities");
+            if (authorities != null) {
+                all.addAll(authorities);
+            }
 
-            return authorities.stream()
+            authorities = jwt.getClaimAsStringList("scope");
+            if (authorities != null) {
+                all.addAll(authorities);
+            }
+            return all.stream()
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
         }
