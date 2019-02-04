@@ -9,6 +9,9 @@ management:
     web:
       exposure:
         include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
 
 spring:
   zipkin:
@@ -21,7 +24,7 @@ spring:
       - ${KAFKA_URL:kafka}:${KAFKA_PORT:9092}
   sleuth:
     sampler:
-      probability: 1.0
+      probability: 0
   devtools:
     remote:
       secret: thisismysecret
@@ -36,6 +39,9 @@ spring:
 #    reactor.ipc.netty: DEBUG
 #    reactor.netty: DEBUG
 
+logging:
+  level:
+    org.apache.kafka.clients.producer: WARN
 
 
 

@@ -1,4 +1,4 @@
 #!/bin/sh
 set -ex
 
-docker-compose -f docker-compose-services.yml up
+docker-compose -f services.yml up

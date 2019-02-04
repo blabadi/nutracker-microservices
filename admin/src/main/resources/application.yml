@@ -1,2 +1,47 @@
 server:
     port: 9009
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://discovery:8761/eureka}
+    register-with-eureka: false
+
+# will be fetched from eurka
+auth:
+  server: http://auth-server
+
+spring:
+  application:
+    name: admin
+  boot:
+    admin:
+      discovery:
+        ignored-services: spring-boot-admin
+  security:
+    user:
+      name: boot-admin
+      password: boot-admin
+oauth2:
+  client:
+      registration:
+        admin-server:
+          provider: local-auth-server
+          client-id: admin-ui
+          client-secret: admin-ui
+          client-authentication-method: basic
+          authorization-grant-type: client_credentials
+          scope: ACTUATOR, PROFILE
+          client-name: admin server
+          redirect-uri-template: "{baseUrl}/login/oauth2/code/{registrationId}"
+      provider:
+        local-auth-server:
+          authorization-uri: ${auth.server}/oauth/authorize
+          token-uri: ${auth.server}/oauth/token
+          user-info-uri: ${auth.server}/resources/user-info
+          user-name-attribute: name
+logging:
+  level:
+    root: INFO
+#    org.springframework.security: DEBUG
+#    org.springframework.boot: DEBUG

@@ -27,13 +27,12 @@ public class IdentityServiceAdapter {
     }
 
 
-    public CompletableFuture<User> byUsername(String name) {
+    public Mono<User> byUsername(String name) {
         return client.get().uri("http://identity/api/user/{name}", name)
                 .exchange()
                 .transform(CircuitBreakerOperator.of(circuitBreaker))
                 .flatMap(this::handleResponse)
-                .onErrorResume(ex -> Mono.empty())
-                .toFuture();
+                .onErrorResume(ex -> Mono.empty());
     }
 
     private Mono<User> handleResponse(ClientResponse response) {

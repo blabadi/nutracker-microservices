@@ -17,7 +17,7 @@
 	<properties>
 		<java.version>1.10</java.version>
 		<spring-boot-admin.version>2.1.1</spring-boot-admin.version>
-		<spring-cloud.version>Greenwich.RC2</spring-cloud.version>
+		<spring-cloud.version>Greenwich.RELEASE</spring-cloud.version>
 		<docker.image.prefix>basharlabadi/nutracker-</docker.image.prefix>
 		<resilience4j.version>0.13.2</resilience4j.version>
 	</properties>
@@ -43,10 +43,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>de.codecentric</groupId>
-			<artifactId>spring-boot-admin-starter-client</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-config</artifactId>
 		</dependency>
@@ -68,6 +64,7 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-oauth2</artifactId>
@@ -138,8 +135,6 @@
 			<version>1.2.2</version>
 		</dependency>
 
-
-
 		<!-- resilience4j -->
 		<dependency>
 			<groupId>io.github.resilience4j</groupId>
@@ -169,13 +164,6 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
 				<version>${spring-cloud.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>de.codecentric</groupId>
-				<artifactId>spring-boot-admin-dependencies</artifactId>
-				<version>${spring-boot-admin.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -236,7 +224,6 @@
 			<url>https://repo.spring.io/milestone</url>
 		</repository>
 
-
 		<repository>
 			<snapshots>
 				<enabled>false</enabled>
@@ -245,7 +232,6 @@
 			<name>jcenter</name>
 			<url>http://jcenter.bintray.com</url>
 		</repository>
-
 
 	</repositories>
 

@@ -18,7 +18,7 @@
 	<properties>
 		<java.version>11</java.version>
 		<spring-boot-admin.version>2.1.1</spring-boot-admin.version>
-		<spring-cloud.version>Greenwich.RC2</spring-cloud.version>
+		<spring-cloud.version>Greenwich.RELEASE</spring-cloud.version>
 		<docker.image.prefix>basharlabadi/nutracker-</docker.image.prefix>
 		<resilience4j.version>0.13.2</resilience4j.version>
 	</properties>
