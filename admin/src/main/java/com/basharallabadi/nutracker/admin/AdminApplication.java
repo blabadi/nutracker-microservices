@@ -43,7 +43,6 @@ public class AdminApplication {
 
     @Bean
     WebClient oauth2WebClient(LoadBalancerExchangeFilterFunction eff) {
-
         return WebClient.builder()
                 .filter(eff)
                 .filter((r, next) ->  {
@@ -70,6 +69,7 @@ public class AdminApplication {
                 .retrieve()
                 .bodyToMono(Map.class)
                 .block();
+
 //        System.out.println(jwt);
         String jwtToken = jwt.get("access_token");
 
@@ -108,7 +108,6 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .formLogin();
     }
-
 
 }
 

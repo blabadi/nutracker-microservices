@@ -22,6 +22,10 @@ spring:
     user:
       name: boot-admin
       password: boot-admin
+
+# we don't use spring security oauth2 client/login to protect this app urls, these are just properties in the same
+# format used by the app to get a jwt to access actuator endpoints protected with oauth2.
+# I documented the different ways the admin accesses different services in README.md
 oauth2:
   client:
       registration:
