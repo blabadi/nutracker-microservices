@@ -39,7 +39,7 @@ a user can search for a food, and add a portion of it and many others as daily e
         - Monitoring: ELK  (tbd) , spring actuator & admin, Zipkin, slueth
         - containerization: docker
         - Elastic search server as search engine (tbd)
-        - spring security oauth2
+        - spring security oauth2 + jwt tokens
         - data stores: mongo db
         - junit 5, mockito, embedded dbs
         - maven, git, shell scripts ..
@@ -51,15 +51,15 @@ I went with a docker first approach where the configs are optimized to run faste
 we can still run it without docker at all but will need manual work to get dbs up etc.. most the properties are overridable
 and can be configured
 
-infrastructure, config eurka mongo, execute:
+infrastructure, config eurka mongo, etc execute:
 
-```./run/docker/local/start-infra.sh```
+```make start_infra```
 
 services:
 
-```./run/docker/local/start-services.sh```
+```make start_services```
 (you need to start infra first)
 
-if you want to work on specific service
+if you want to work on specific service and run it without docker
 example:
 ```./run/start-mvnw.sh -p food-catalog```

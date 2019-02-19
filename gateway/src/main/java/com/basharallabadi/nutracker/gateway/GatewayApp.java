@@ -92,6 +92,7 @@ public class GatewayApp {
         return new ReactiveJwtAuthenticationConverterAdapter(extractor);
     }
 
+    // the default extractor only considers scopes as granted authorities
     static class GrantedAuthoritiesExtractor extends JwtAuthenticationConverter {
         protected Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
             List<String> all = new ArrayList<>();
@@ -132,7 +133,7 @@ public class GatewayApp {
 
 
 
-// done in properties file to be configurable :D
+// done in properties file to be configurable kept it here as example :D
 //    @Bean
 //    public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
 //        //@formatter:off

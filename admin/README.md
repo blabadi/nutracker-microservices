@@ -6,6 +6,7 @@ Securing the admin app:
 - the admin app also needs to access protected urls:
     - we need something that can stay authenticated in background to collect statistics and alerting
     types of protections:
+
     1- resources that are protected with *jwt token* (gateway)
         - I basically needed to use client credentials to access protected actuators using oauth2.
           we have a bean HttpHeadersProvider that does this on startup.
