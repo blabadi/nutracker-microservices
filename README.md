@@ -2,22 +2,23 @@
 # About
 
 Nutracker is a macro nutritions and calories log and tracking application.
-a user can search for a food, and add a portion of it and many others as daily entries in their daily log of meals.
+a user can search for a food, or add a portion of it and many other foods as daily entries in their daily log of meals.
 
 ## Backend Architecture
 
 - Micro services
     - Domain services: entries, food-catalog, identity
-    - Support services: config-server, discovery, admin, auth-server
-    - framework spring boot 2 stack, webflux (reactive).
+    - Support services: config-server, eurka discovery, boot admin, OAuth2 auth-server
+    - frameworks: spring boot 2 stack, webflux (reactive).
     - data sources: mongo, elastic search (tbd)
+    - message bus: kafka, currently used by zipkin to log http traces
     - docker for containers
     - concerns and design goals:
         - Isolated and autonomous
         - Resilient, Fault tolerant
         - Responsive
         - Efficient
-        - Scalable/ Elastic/ Highly available (tbd, use kubernetes)
+        - Scalable/ Elastic/ Highly available 
         - Monitored & traceable
         - Developer quality of life (strong tooling and fast workflow)
     - patterns:
@@ -26,14 +27,13 @@ a user can search for a food, and add a portion of it and many others as daily e
         - circuit breakers (resilience4j)
         - client side load balancing (Ribbon)
         - reactive async I/O flow (reactor)
-        - token based authentication (OAuth2)
-        - Api gateway (spring cloud gateway)
+        - stateless token based authentication (OAuth2 + jwt)
+        - Api gateway as single point of entry (spring cloud gateway)
         - Monitoring:
             - health checking
             - logs aggregation
-            - circuit breaker events tracking
     - Technologies:
-        - Spring boot: spring data, webflux, test
+        - Spring boot 2: spring data, webflux, test
         - Netflix OSS: eurka, ribbon
         - resilience4j, circuit breaker
         - Monitoring: ELK  (tbd) , spring actuator & admin, Zipkin, slueth
@@ -42,7 +42,7 @@ a user can search for a food, and add a portion of it and many others as daily e
         - spring security oauth2 + jwt tokens
         - data stores: mongo db
         - junit 5, mockito, embedded dbs
-        - maven, git, shell scripts ..
+        - maven, git, shell scripts
         - java 11
 
 # How to run
