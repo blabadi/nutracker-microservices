@@ -1,4 +1,5 @@
-FROM adoptopenjdk/openjdk11:jdk-11.0.1.13-alpine
+# this base image has extra stuff, see /run/docker/base-images
+FROM basharlabadi/openjdk11-11.0.13-alpine
 
 #  unpacks spring boot uber jar to maker startup faster, see: https://spring.io/guides/gs/spring-boot-docker/
 VOLUME /tmp

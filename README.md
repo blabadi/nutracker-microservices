@@ -36,7 +36,7 @@ a user can search for a food, and add a portion of it and many others as daily e
         - Spring boot: spring data, webflux, test
         - Netflix OSS: eurka, ribbon
         - resilience4j, circuit breaker
-        - Monitoring: ELK  (tbd) , spring actuator & admin, Zipkin, slueth
+        - Monitoring: ELK , spring actuator & admin, Zipkin, slueth
         - containerization: docker
         - Elastic search server as search engine (tbd)
         - spring security oauth2 + jwt tokens
