@@ -39,7 +39,7 @@ a user can search for a food, or add a portion of it and many other foods as dai
         - Monitoring: ELK , spring actuator & admin, Zipkin, slueth
         - containerization: docker
         - Elastic search server as search engine (tbd)
-        - spring security oauth2 + jwt tokens
+        - spring security 5, oauth2 + jwt tokens
         - data stores: mongo db
         - junit 5, mockito, embedded dbs
         - maven, git, shell scripts
