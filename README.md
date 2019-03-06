@@ -36,7 +36,7 @@ a user can search for a food, or add a portion of it and many other foods as dai
         - Spring boot 2: spring data, webflux, test
         - Netflix OSS: eurka, ribbon
         - resilience4j, circuit breaker
-        - Monitoring: ELK  (tbd) , spring actuator & admin, Zipkin, slueth
+        - Monitoring: ELK , spring actuator & admin, Zipkin, slueth
         - containerization: docker
         - Elastic search server as search engine (tbd)
         - spring security oauth2 + jwt tokens

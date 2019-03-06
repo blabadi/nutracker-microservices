@@ -7,6 +7,9 @@ services:
     image: basharlabadi/nutracker-admin:${ADMIN_SERVER_TAG}
     ports:
       - "9009:9009"
+    depends_on:
+      - auth-server
+    entrypoint:  sh -c '/wait-for.sh auth-server:8004 -- java -cp app:app/lib/* com.basharallabadi.nutracker.admin.AdminApplication'
   config-server:
     container_name: config-server
     image: basharlabadi/nutracker-config-server:${CONFIG_SERVER_TAG}
@@ -26,6 +29,7 @@ services:
       - config-server
     environment:
       CONFIG_SERVER_URL: ${CONFIG_SERVER_URL}
+    restart: on-failure
 
   auth-server:
     container_name: auth-server
@@ -37,7 +41,6 @@ services:
     depends_on:
       - config-server
       - discovery
-
   food-mongo:
     image: mongo:4.1
     container_name: ${FOODS_MONGO_HOST}
@@ -55,7 +58,6 @@ services:
       APP_MONGO_USER: ${FOODS_MONGO_USERNAME}
       APP_MONGO_PASS: ${FOODS_MONGO_PASSWORD}
       APP_MONGO_DB: ${FOODS_MONGO_DB}
-
   entries-mongo:
     image: mongo:4.1
     command: mongod --port 27018
@@ -102,3 +104,46 @@ services:
       - kafka
       - zookeeper
 
+  #############################################
+  ##### ELK stack for logs aggregation    #####
+  #############################################
+  elasticsearch:
+    container_name: elk-elastic-search
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.3.2
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.3.2
+    ports:
+      - '5601:5601'
+    depends_on:
+      - elasticsearch
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:6.6.1
+    user: root
+    container_name: filebeat
+    volumes:
+      - filebeat_data:/usr/share/filebeat/data:rw
+      - ./data/elk-config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - "ELASTICSEARCH_HOSTS=elk-elastic-search:9200"
+      - strict.perms=false
+    depends_on:
+      - elasticsearch
+    command: filebeat -e -strict.perms=false
+#  logstash:
+#    image: docker.elastic.co/logstash/logstash:6.3.2
+#    ports:
+#      - '25826:25826'
+#    volumes:
+#      - ./data/elk-config:/elk-config
+#    command: logstash -f /elk-config/logstash.config
+#    depends_on:
+#      - elasticsearch
+volumes:
+  filebeat_data:

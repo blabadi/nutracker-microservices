@@ -4,4 +4,13 @@ spring:
   cloud:
     config:
       uri: ${CONFIG_SERVER_URL:http://config-server:8888}
-      fail-fast: false
+      fail-fast: true
+#      This didn't work only worked in one line
+#      retry:
+#        max-attempts: 5
+#        initial-interval: 5000
+#        multiplier: 1.5
+
+spring.cloud.config.retry.max-attempts: 20
+spring.cloud.config.retry.initial-interval: 10000
+spring.cloud.config.retry.multiplier: 1.5
