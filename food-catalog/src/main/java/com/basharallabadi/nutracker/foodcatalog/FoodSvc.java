@@ -37,7 +37,7 @@ class FoodSvc {
         return extendedFoodRepo.findFood(name)
                 .onErrorMap((e) -> {
                     e.printStackTrace();
-                    return new RuntimeException("not found");
+                    return new RuntimeException("error finding food", e);
                 });
     }
 
