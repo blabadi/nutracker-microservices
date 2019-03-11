@@ -41,12 +41,12 @@ services:
     depends_on:
       - config-server
       - discovery
+
   food-mongo:
     image: mongo:4.1
     container_name: ${FOODS_MONGO_HOST}
     volumes:
       - ./data/mongo/foods/db:/data/db
-      # see https://medium.com/@MaxouMask/secured-mongodb-container-6b602ef67885
       - ./data/mongo/foods/seeds/:/docker-entrypoint-initdb.d/
     ports:
       - "27017:27017"
@@ -58,12 +58,14 @@ services:
       APP_MONGO_USER: ${FOODS_MONGO_USERNAME}
       APP_MONGO_PASS: ${FOODS_MONGO_PASSWORD}
       APP_MONGO_DB: ${FOODS_MONGO_DB}
+
   entries-mongo:
     image: mongo:4.1
     command: mongod --port 27018
     container_name: ${ENTRIES_MONGO_HOST}
     volumes:
       - ./data/mongo/entries/db:/data/db
+      # see https://medium.com/@MaxouMask/secured-mongodb-container-6b602ef67885
       - ./data/mongo/entries/seeds/:/docker-entrypoint-initdb.d/
     ports:
       - "27018:27018"
@@ -108,15 +110,15 @@ services:
   ##### ELK stack for logs aggregation    #####
   #############################################
   elasticsearch:
-    container_name: elk-elastic-search
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.3.2
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
     ports:
       - '9200:9200'
       - '9300:9300'
     environment:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
   kibana:
-    image: docker.elastic.co/kibana/kibana:6.3.2
+    image: docker.elastic.co/kibana/kibana:6.6.1
     ports:
       - '5601:5601'
     depends_on:
@@ -131,7 +133,7 @@ services:
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
-      - "ELASTICSEARCH_HOSTS=elk-elastic-search:9200"
+      - "ELASTICSEARCH_HOSTS=elasticsearch:9200"
       - strict.perms=false
     depends_on:
       - elasticsearch

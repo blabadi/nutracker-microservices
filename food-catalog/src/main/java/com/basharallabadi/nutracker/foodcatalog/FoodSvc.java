@@ -1,5 +1,7 @@
 package com.basharallabadi.nutracker.foodcatalog;
 
+import com.basharallabadi.nutracker.foodcatalog.repo.elastic.FoodElasticSearchRepo;
+import com.basharallabadi.nutracker.foodcatalog.repo.mongo.FoodDbRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,30 +11,38 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Service
 class FoodSvc {
-    private FoodRepo foodRepo;
-    // we can avoid having double repos here by merging these both according to spring-data rules
-    // https://stackoverflow.com/questions/19583540/spring-data-jpa-no-property-found-for-type-exception
-    // but i didn't like it.
-    @Autowired
-    FoodRepoExtended extendedFoodRepo;
+    private FoodDbRepo foodDbRepo;
+
+    private CustomFoodRepo extendedFoodRepo;
+
+    private FoodElasticSearchRepo elasticSearchRepo;
 
     @Autowired
-    public FoodSvc(FoodRepo foodRepo, FoodRepoExtended extendedFoodRepo) {
-        this.foodRepo = foodRepo;
+    public FoodSvc(FoodDbRepo foodDbRepo, CustomFoodRepo extendedFoodRepo, FoodElasticSearchRepo elasticSearchRepo) {
+        this.foodDbRepo = foodDbRepo;
         this.extendedFoodRepo = extendedFoodRepo;
+        this.elasticSearchRepo = elasticSearchRepo;
     }
 
-
     Mono<Food> createFood(Food f) {
-        return foodRepo.save(f);
+        return foodDbRepo.save(f)
+            .flatMap(
+                food -> elasticSearchRepo.save(food)
+            );
+
     }
 
     Flux<Food> searchFoodByName(String name) {
         log.info("searchFoodByName called with : {}", name);
-        return extendedFoodRepo.searchFoodByName(name);
+        return extendedFoodRepo.findFood(name)
+                .onErrorMap((e) -> {
+                    e.printStackTrace();
+                    return new RuntimeException("not found");
+                });
     }
 
     Mono<Food> byId(String id) {
-        return foodRepo.findById(id).switchIfEmpty(Mono.error(new NotFound()));
+        return foodDbRepo.findById(id)
+            .switchIfEmpty(Mono.error(new NotFound()));
     }
 }

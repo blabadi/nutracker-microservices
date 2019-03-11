@@ -9,3 +9,5 @@ spring:
       password: ${FOODS_MONGO_PASSWORD:password}
       host: ${FOODS_MONGO_HOST:food-catalog-mongo}
       port: ${ENTRIES_MONGO_PORT:27017}
+elasticsearch:
+  server: ${ELASTIC_SEARCH_HOST:elasticsearch:9200}
