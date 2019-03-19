@@ -190,7 +190,7 @@ class AuthenticationConfiguration extends WebSecurityConfigurerAdapter {
 		http
 			.authorizeRequests()
 				.antMatchers("/actuator/**")
-					.hasRole("ADMIN")
+					.permitAll()
 			.anyRequest()
 				.authenticated()
 			.and()
@@ -223,14 +223,11 @@ class ProfileRestController {
 @Configuration
 @EnableResourceServer
 class ResourceServerConfig extends ResourceServerConfigurerAdapter {
-
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http
 			.antMatcher("/resources/**")
 			.authorizeRequests()
 			.mvcMatchers("/resources/user-info").access("#oauth2.hasScope('PROFILE')");
-
-
 	}
 }

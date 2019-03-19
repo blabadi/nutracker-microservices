@@ -2,6 +2,7 @@
 # also see .env for full env vars
 version: '3.3'
 services:
+
   admin:
     container_name: admin
     image: basharlabadi/nutracker-admin:${ADMIN_SERVER_TAG}
@@ -10,16 +11,23 @@ services:
     depends_on:
       - auth-server
     entrypoint:  sh -c '/wait-for.sh auth-server:8004 -- java -cp app:app/lib/* com.basharallabadi.nutracker.admin.AdminApplication'
+
   config-server:
     container_name: config-server
     image: basharlabadi/nutracker-config-server:${CONFIG_SERVER_TAG}
     ports:
       - "8888:8888"
+    volumes:
+      # this volume is to allow live changes to the config server while running in docker container
+      # in the same time one can run config server locally without docker and it will work normally.
+      - ../../../config-server/src/main/resources/local-config:/app/local-config
+
   redis:
     image: redis:5.0.3
     container_name: redis
     ports:
       - "6379:6379"
+
   discovery:
     container_name: discovery
     image: basharlabadi/nutracker-discovery:${DISCOVERY_SERVER_TAG}
@@ -111,18 +119,20 @@ services:
   #############################################
   elasticsearch:
     container_name: elasticsearch
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.6.1
     ports:
       - '9200:9200'
       - '9300:9300'
     environment:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+
   kibana:
-    image: docker.elastic.co/kibana/kibana:6.6.1
+    image: docker.elastic.co/kibana/kibana-oss:6.6.1
     ports:
       - '5601:5601'
     depends_on:
       - elasticsearch
+
   filebeat:
     image: docker.elastic.co/beats/filebeat:6.6.1
     user: root
